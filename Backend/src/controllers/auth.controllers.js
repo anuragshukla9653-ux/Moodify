@@ -1,9 +1,9 @@
 const userModel = require("../models/user.model.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const blacklistModel = require("../models/blacklist.model.js");
+const redis = require("../config/cache.js")
 
-async function registerUser(req, res){
+async function registerUser(req, res) {
     const { username, email, password } = req.body;
 
     const isAlreadyRegistered = await userModel.findOne({
@@ -13,7 +13,7 @@ async function registerUser(req, res){
         ]
     })
 
-    if(isAlreadyRegistered){
+    if (isAlreadyRegistered) {
         return res.status(400).json({
             message: "User with this email or username already exists"
         })
@@ -43,7 +43,7 @@ async function registerUser(req, res){
     })
 }
 
-async function loginUser( req, res){
+async function loginUser(req, res) {
     const { email, password, username } = req.body;
     const user = await userModel.findOne({
         $or: [
@@ -51,7 +51,7 @@ async function loginUser( req, res){
             { username }
         ]
     }).select("+password");
-    if(!user){
+    if (!user) {
         return res.status(400).json({
             message: "Invalid "
         })
@@ -59,11 +59,11 @@ async function loginUser( req, res){
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
-    if(!isPasswordCorrect){
+    if (!isPasswordCorrect) {
         return res.status(400).json({
             message: "Invalid credentials"
         })
-    }   
+    }
 
     const token = jwt.sign({
         id: user._id,
@@ -81,7 +81,7 @@ async function loginUser( req, res){
     });
 }
 
-async function getMe(req, res){
+async function getMe(req, res) {
     const user = await userModel.findById(req.user.id);
 
     res.status(200).json({
@@ -91,29 +91,17 @@ async function getMe(req, res){
 }
 
 async function logoutUser(req, res) {
-    const token  = req.cookies.token
-
-    if (!token) {
-        return res.status(400).json({
-            message: "Token cookie is missing"
-        });
-    }
+    const token = req.cookies.token
 
     res.clearCookie("token")
 
-    try {
-        await blacklistModel.create({
-            token
-        })
-
-        return res.status(200).json({
-            message: "logout successfully."
-        })
-    } catch (error) {
-        return res.status(500).json({
-            message: "Failed to blacklist token"
-        });
+    if (token) {
+        await redis.set(token, Date.now().toString())
     }
+
+    return res.status(200).json({
+        message: "logout successfully."
+    })
 }
 module.exports = {
     registerUser,

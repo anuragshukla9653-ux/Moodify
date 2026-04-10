@@ -1,4 +1,5 @@
-const userModel = require("../models/user.model");
+const redis = require("../config/cache.js")
+
 const jwt = require("jsonwebtoken");
 
 async function authUser(req, res, next) {
@@ -8,6 +9,14 @@ async function authUser(req, res, next) {
         return res.status(401).json({
             message: "Token not provided"
         })
+    }
+
+    const isTokenBlacklisted = await redis.get(token)
+
+    if (isTokenBlacklisted) {
+        return res.status(401).json({
+            message: "Token has been revoked"
+        });
     }
 
     try {

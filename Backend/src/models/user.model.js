@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const { MemoryQuery, createHybridModel, createMemoryRecord, memoryStore, normalizeId } = require("../config/runtime-store");
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -21,5 +22,26 @@ const userSchema = new mongoose.Schema({
 // userSchema.pre('save', function(next) {})
 // userSchema.post('save', function(next) {})
 
-const userModel = mongoose.model("User", userSchema);
-module.exports = userModel
+const mongooseModel = mongoose.models.User || mongoose.model("User", userSchema);
+
+const memoryAdapter = {
+    create(data) {
+        return createMemoryRecord("users", data);
+    },
+    findOne(filter = {}) {
+        return new MemoryQuery({
+            collection: () => memoryStore.users,
+            filter,
+            single: true,
+        });
+    },
+    findById(id) {
+        return new MemoryQuery({
+            collection: () => memoryStore.users,
+            filter: { _id: normalizeId(id) },
+            single: true,
+        });
+    },
+};
+
+module.exports = createHybridModel(mongooseModel, memoryAdapter);

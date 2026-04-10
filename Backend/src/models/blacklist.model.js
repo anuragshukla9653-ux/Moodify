@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { MemoryQuery, createHybridModel, createMemoryRecord, memoryStore } = require("../config/runtime-store");
 
 const blacklistSchema = new mongoose.Schema({
     token: {
@@ -9,6 +10,26 @@ const blacklistSchema = new mongoose.Schema({
     timestamps: true
 })
 
-const blacklistModel = mongoose.model("blacklist", blacklistSchema);
+const mongooseModel = mongoose.models.blacklist || mongoose.model("blacklist", blacklistSchema);
 
-module.exports = blacklistModel;
+const memoryAdapter = {
+    create(data) {
+        return createMemoryRecord("blacklists", data);
+    },
+    findOne(filter = {}) {
+        return new MemoryQuery({
+            collection: () => memoryStore.blacklists,
+            filter,
+            single: true,
+        });
+    },
+    find(filter = {}) {
+        return new MemoryQuery({
+            collection: () => memoryStore.blacklists,
+            filter,
+            single: false,
+        });
+    },
+};
+
+module.exports = createHybridModel(mongooseModel, memoryAdapter);
