@@ -35,5 +35,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/songs", songRoutes);
 app.use("/api/moods", moodRoutes);
-
+app.get("/", (req, res) => {
+    res.send("Moodify API is running 🚀");
+});
 module.exports = app;
