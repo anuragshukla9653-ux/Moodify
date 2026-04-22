@@ -38,6 +38,8 @@ if (!runtime.memoryStore) {
     };
 }
 
+const memoryStore = runtime.memoryStore;
+
 function useMemoryDb() {
     return Boolean(runtime.useMemoryDb);
 }
@@ -324,6 +326,7 @@ module.exports = {
     MemoryQuery,
     normalizeId,
     pickFields,
+    memoryStore,
     runtime,
     seedMemorySongs,
     sortDocs,

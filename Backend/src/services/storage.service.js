@@ -1,13 +1,27 @@
 const ImageKit = require("@imagekit/nodejs").default
 
-const privateKey = process.env.IMAGEKIT_PRIVATE_KEY || process.env.IMAGEKIT_PUBLIC_KEY
+let client = null
 
-const client = new ImageKit({
-    privateKey,
-})
+function getClient() {
+    if (client) {
+        return client
+    }
+
+    const privateKey = process.env.IMAGEKIT_PRIVATE_KEY
+
+    if (!privateKey) {
+        throw new Error("IMAGEKIT_PRIVATE_KEY is required to upload files")
+    }
+
+    client = new ImageKit({
+        privateKey,
+    })
+
+    return client
+}
 
 async function uploadFile({ buffer, filename, folder = "", mimeType }) {
-    const file = await client.files.upload({
+    const file = await getClient().files.upload({
         file: await ImageKit.toFile(Buffer.from(buffer), filename, mimeType ? { type: mimeType } : undefined),
         fileName: filename,
         folder

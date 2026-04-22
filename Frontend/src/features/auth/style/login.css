@@ -44,3 +44,9 @@
     border-color: #007bff;
     outline: none;
 }
+
+.login-page .form-container .form-error {
+    margin: 0;
+    color: #dc2626;
+    font-size: 0.9rem;
+}

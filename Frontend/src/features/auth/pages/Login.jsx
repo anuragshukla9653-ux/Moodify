@@ -11,11 +11,23 @@ export default function Login() {
     const navigate = useNavigate()
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
+    const [errorMessage, setErrorMessage] = useState("")
 
     async function handleSubmit(e) {
         e.preventDefault()
-        await handleLogin({ email, password })
-        navigate("/")
+        setErrorMessage("")
+
+        if (!email.trim() || !password.trim()) {
+            setErrorMessage("Email and password are required")
+            return
+        }
+
+        try {
+            await handleLogin({ email, password })
+            navigate("/")
+        } catch (error) {
+            setErrorMessage(error.message || "Unable to login")
+        }
     }
     return (
         <main className="login-page">
@@ -35,6 +47,7 @@ export default function Login() {
                         placeholder="Enter your password" type="password"
                         name="password" />
                     <button className="button" type="submit">Sign in</button>
+                    {errorMessage ? <p className="form-error" role="alert">{errorMessage}</p> : null}
                 </form>
                 <p>
                     New here? <Link to="/register">Create an account</Link>
