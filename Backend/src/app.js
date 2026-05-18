@@ -1,6 +1,7 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const path = require("path");
 
 const authRoutes = require("./routes/auth.routes");
 const songRoutes = require("./routes/song.routes");
@@ -35,7 +36,13 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/songs", songRoutes);
 app.use("/api/moods", moodRoutes);
-app.get("/", (req, res) => {
-    res.send("Moodify API is running 🚀");
+
+// Static files
+app.use(express.static(path.join(__dirname, "../Public")));
+
+// Catch-all route for SPA
+app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../Public", "index.html"));
 });
+
 module.exports = app;
