@@ -286,7 +286,7 @@
 .home-card--history {
     display: flex;
     flex-direction: column;
-    max-height: min(345px, calc(100vh - 340px));
+    max-height: 480px;
     overflow: hidden;
     min-height: 0;
 }
@@ -468,7 +468,9 @@
 
 .home-track {
     display: grid;
-    gap: 12px;
+    grid-template-columns: 80px minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 16px;
     padding: 12px;
     border-radius: 22px;
     border: 1px solid rgba(255, 255, 255, 0.06);
@@ -504,8 +506,10 @@
 }
 
 .home-track__art {
-    aspect-ratio: 4;
-    border-radius: 20px;
+    width: 80px;
+    height: 80px;
+    aspect-ratio: 1;
+    border-radius: 16px;
     overflow: hidden;
     background: linear-gradient(145deg, rgba(255, 123, 66, 0.22), rgba(255, 255, 255, 0.04));
 }
@@ -528,8 +532,10 @@
 }
 
 .home-track__body {
-    display: grid;
-    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
 }
 
 .home-track__title {
@@ -537,6 +543,9 @@
     font-weight: 700;
     line-height: 1.4;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .home-track__artist {
@@ -544,6 +553,9 @@
     font-size: 0.82rem;
     line-height: 1.45;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .home-track__reason {
@@ -551,19 +563,22 @@
     font-size: 0.88rem;
     line-height: 1.55;
     margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .home-track__footer {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    justify-content: flex-end;
 }
 
 .home-track__play {
-    padding-inline: 0.92rem;
-    min-height: 42px;
-    font-size: 0.88rem;
+    padding-inline: 1.2rem;
+    min-height: 38px;
+    font-size: 0.85rem;
+    border-radius: 999px;
 }
 
 .face-expression {
