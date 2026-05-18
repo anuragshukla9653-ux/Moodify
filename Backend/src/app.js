@@ -41,7 +41,7 @@ app.use("/api/moods", moodRoutes);
 app.use(express.static(path.join(__dirname, "../Public")));
 
 // Catch-all route for SPA
-app.get("*", (req, res) => {
+app.use((req, res) => {
     res.sendFile(path.resolve(__dirname, "../Public", "index.html"));
 });
 
